@@ -1,0 +1,4 @@
+__pycache__
+backend/load.py
+backend/questions.txt
+node_modules
