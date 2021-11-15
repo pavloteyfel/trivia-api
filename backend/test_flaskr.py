@@ -71,7 +71,7 @@ class TriviaTestCase(TestCase):
 
     def test_get_questions(self):
         """
-        Checks: 
+        Checks:
             - status_code == 200
             - 10 items per page
             - total amount of questions
@@ -88,7 +88,7 @@ class TriviaTestCase(TestCase):
 
     def test_search_questions(self):
         """
-        Checks: 
+        Checks:
             - status_code == 200
             - presence of the required attributes (4)
             - the searched question was returned based on the search criteria
@@ -106,7 +106,7 @@ class TriviaTestCase(TestCase):
 
     def test_get_questions_of_category(self):
         """
-        Checks: 
+        Checks:
             - status_code == 200
             - presence of the required attributes (3)
             - correct amount of total questions
@@ -125,7 +125,7 @@ class TriviaTestCase(TestCase):
 
     def test_delete_questions(self):
         """
-        Checks: 
+        Checks:
             - status_code == 202
             - if the delete request was accepted and removed from database
             - if empty response was received
@@ -139,7 +139,7 @@ class TriviaTestCase(TestCase):
 
     def test_create_questions(self):
         """
-        Checks: 
+        Checks:
             - status_code == 201
             - if the post request was acceped and insrted into the db
             - if empty response was received
@@ -159,9 +159,9 @@ class TriviaTestCase(TestCase):
 
     def test_get_quizzes(self):
         """
-        Checks: 
+        Checks:
             - status_code == 201
-            - if the post request was acceped and proper question of 
+            - if the post request was acceped and proper question of
             a category was returned(Category.id > 0)
             - if questions are omitted by the "previous_questions" attribute
         """
@@ -184,7 +184,7 @@ class TriviaTestCase(TestCase):
 
     def test_get_quizzes_all_category(self):
         """
-        Checks: 
+        Checks:
             - status_code == 201
             - if the post request was accepted and a question was returned of
             any category (Category.id == 0)
@@ -208,8 +208,8 @@ class TriviaTestCase(TestCase):
 
     def test_resoure_not_found_404(self):
         """
-        Checks: 
-            - status code 404 and message error in case of non existent 
+        Checks:
+            - status code 404 and message error in case of non existent
             endpoint call
         """
         response = self.client.get('/api/v1.0/play')
@@ -219,8 +219,8 @@ class TriviaTestCase(TestCase):
 
     def test_delete_questions_404(self):
         """
-        Checks: 
-            - status code 404 and message error in case of non existent 
+        Checks:
+            - status code 404 and message error in case of non existent
             question id
         """
         response = self.client.delete('/api/v1.0/questions/9999')
@@ -230,7 +230,7 @@ class TriviaTestCase(TestCase):
 
     def test_create_questions_400(self):
         """
-        Checks: 
+        Checks:
             - status code 400 and message error in case of missing attributes
         """
         body = {
@@ -243,7 +243,7 @@ class TriviaTestCase(TestCase):
 
     def test_get_quizzes_400(self):
         """
-        Checks: 
+        Checks:
             - status code 400 and message error in case of missing attributes
         """
 
@@ -261,7 +261,7 @@ class TriviaTestCase(TestCase):
 
     def test_get_quizzes_404(self):
         """
-        Checks: 
+        Checks:
             - status code 404 and message error in case of missing attributes
         """
         body = {
@@ -278,7 +278,7 @@ class TriviaTestCase(TestCase):
 
     def test_method_not_allowed_405(self):
         """
-        Checks: 
+        Checks:
             - status code 405 and message error in case of bad method request
         """
         response = self.client.put('/api/v1.0/questions', json={})
