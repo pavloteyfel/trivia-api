@@ -1,8 +1,5 @@
-from random import random
 from flask_testing import TestCase
 import unittest
-import json
-import random
 
 from models import Question, Category, db
 from flaskr import create_app
@@ -28,6 +25,7 @@ def populate_db(db, test_data):
             db.session.add(question_obj)
             db.session.commit()
             db.session.close()
+
 
 class TriviaTestCase(TestCase):
     """This class represents the trivia test case"""
@@ -68,7 +66,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 200)
         data = response.get_json()
         self.assertTrue(data['categories'])
-    
+
     def test_get_questions(self):
         """
         Checks: 
@@ -88,7 +86,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(data['categories'])
         # this attribute is always false
         self.assertFalse(data['currentCategory'])
-    
+
     def test_search_questions(self):
         """
         Checks: 
@@ -118,12 +116,12 @@ class TriviaTestCase(TestCase):
         category_obj = Category.query.get(1)
         response = self.client.get('/api/v1.0/categories/1/questions')
         self.assertTrue(response.status_code == 200)
-        data = response.get_json() 
+        data = response.get_json()
         self.assertTrue(data['questions'])
-        self.assertTrue(data['totalQuestions'])    
+        self.assertTrue(data['totalQuestions'])
         self.assertTrue(data['currentCategory'])
         self.assertTrue(len(data['questions']) == len(category_obj.questions))
-        self.assertTrue(data['totalQuestions'] == len(category_obj.questions))    
+        self.assertTrue(data['totalQuestions'] == len(category_obj.questions))
         self.assertTrue(data['currentCategory'] == category_obj.type)
 
     def test_delete_questions(self):
@@ -139,7 +137,7 @@ class TriviaTestCase(TestCase):
         question = Question.query.get(18)
         self.assertFalse(question)
         self.assertFalse(data)
-    
+
     def test_create_questions(self):
         """
         Checks: 
@@ -156,7 +154,7 @@ class TriviaTestCase(TestCase):
         response = self.client.post('/api/v1.0/questions', json=body)
         self.assertTrue(response.status_code == 201)
         data = response.get_json()
-        question = Question.query.filter_by(question = 'Sample question').first()
+        question = Question.query.filter_by(question='Sample question').first()
         self.assertTrue(question)
         self.assertFalse(data)
 
@@ -189,7 +187,7 @@ class TriviaTestCase(TestCase):
         """
         Checks: 
             - status_code == 201
-            - if the post request was acceped and a question was returned of 
+            - if the post request was accepted and a question was returned of
             any category (Category.id == 0)
             - if questions are omitted by the "previous_questions" attribute
         """
@@ -219,7 +217,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 404)
         data = response.get_json()
         self.assertTrue(data['message'] == 'resource not found')
-    
+
     def test_delete_questions_404(self):
         """
         Checks: 
@@ -230,7 +228,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 404)
         data = response.get_json()
         self.assertTrue(data['message'] == 'resource not found')
-    
+
     def test_create_questions_400(self):
         """
         Checks: 
@@ -261,7 +259,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 400)
         data = response.get_json()
         self.assertTrue(data['message'] == 'bad request')
-    
+
     def test_get_quizzes_404(self):
         """
         Checks: 
@@ -288,6 +286,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 405)
         data = response.get_json()
         self.assertTrue(data['message'] == 'method not allowed')
+
 
 if __name__ == "__main__":
     unittest.main()
