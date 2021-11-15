@@ -31,10 +31,18 @@ def create_app(test_config=None):
     @app.route('/api/v1.0/questions', methods=['GET'])
     def get_questions():
         page = request.args.get('page', 1, type=int)
-        pages = Question.query.order_by(Question.id).paginate(page, QUESTIONS_PER_PAGE)
 
+        # Throws 404 by default if there is non existing page
+        pages = Question.query.order_by(Question.id).paginate(page, QUESTIONS_PER_PAGE)
+        categories = Category.query.all()
+
+        # Abort if there are no entires
+        if not categories:
+            abort(404)
+
+        # Format the categories
         categories_formatted = {}
-        for category in Category.query.all():
+        for category in categories:
             categories_formatted[category.id] = category.type
 
         return jsonify({
@@ -46,8 +54,15 @@ def create_app(test_config=None):
 
     @app.route('/api/v1.0/categories/<int:id>/questions', methods=['GET'])
     def get_questions_of_category(id):
-        questions = Question.query.filter(Question.category_id == id).all()
+        # Throws 404 if not found or bad id provided
         category = Category.query.get_or_404(id)
+
+        questions = Question.query.filter(Question.category_id == id).all()
+
+        # Abort if there are no questions found
+        if not questions:
+            abort(404)
+
 
         return jsonify({
             'questions': [question.format() for question in questions],
@@ -64,6 +79,7 @@ def create_app(test_config=None):
         if not categories:
             abort(404)
 
+        # Puts all the categories specific format for the frontend
         for category in categories:
             categories_formatted[category.id] = category.type
 
@@ -71,11 +87,15 @@ def create_app(test_config=None):
 
     @app.route('/api/v1.0/questions/<int:id>', methods=['DELETE'])
     def delete_questions(id):
+        
+        # Throws 404 if there is no question found or bad id provided
         question = Question.query.get_or_404(id)
+
         try:
             db.session.delete(question)
             db.session.commit()
         except:
+            db.session.rollback()
             abort(422)
         finally:
             db.session.close()
@@ -91,7 +111,7 @@ def create_app(test_config=None):
             search_term = request_data.get('searchTerm')
             questions = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
 
-            # abort the operation if are 0 result
+            # abort the operation if are 0 result, current front end doesn't like it
             if not questions:
                 abort(404)
 
@@ -101,19 +121,26 @@ def create_app(test_config=None):
                 'currentCategory': None,
             }), 200
 
-        # then the request is about new question creation, if acquiring of the
-        # attribute fails we abort the operation
+        # then the request is about new question creation, 
+        # if acquiring of the attributes fails we abort the operation with 400
         try:
-            category = Category.query.get_or_404(request_data['category'])
-            question = Question(
-                question=request_data['question'],
-                answer=request_data['answer'],
-                difficulty=request_data['difficulty'],
-                category=category
-            )
-            db.session.add(question)
-            db.session.commit()
+            category_id = request_data['category']
+            question = request_data['question']
+            answer = request_data['answer']
+            difficulty = request_data['difficulty']
         except:
+            abort(400)
+
+        category = Category.query.get_or_404(category_id)
+
+        try:
+            question_obj = Question(question=question, answer=answer,
+                difficulty=difficulty, category=category)
+            db.session.add(question_obj)
+            db.session.commit()
+        # if there is problem with db we abort with 422
+        except:
+            db.session.rollback()
             abort(422)
         finally:
             db.session.close()
@@ -130,7 +157,7 @@ def create_app(test_config=None):
             category_data = request_data['quiz_category']
             category_id = int(category_data['id'])
         except:
-            abort(422)
+            abort(400)
 
         # get a question from a specific category that was not already used
         if category_id > 0:
@@ -156,7 +183,7 @@ def create_app(test_config=None):
 
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"error": 400, "message": "bad request"}), 404
+        return jsonify({"error": 400, "message": "bad request"}), 400
 
     @app.errorhandler(404)
     def resource_not_found(error):

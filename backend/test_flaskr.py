@@ -231,36 +231,36 @@ class TriviaTestCase(TestCase):
         data = response.get_json()
         self.assertTrue(data['message'] == 'resource not found')
     
-    def test_create_questions_422(self):
+    def test_create_questions_400(self):
         """
         Checks: 
-            - status code 422 and message error in case of missing or bad
-            request data
+            - status code 400 and message error in case of missing attributes
         """
         body = {
             'questions': 'Sample question'
         }
         response = self.client.post('/api/v1.0/questions', json=body)
-        self.assertTrue(response.status_code == 422)
+        self.assertTrue(response.status_code == 400)
         data = response.get_json()
-        self.assertTrue(data['message'] == 'unprocessable entity')
+        self.assertTrue(data['message'] == 'bad request')
 
-    def test_get_quizzes_422(self):
+    def test_get_quizzes_400(self):
         """
         Checks: 
-            - status code 422 and message error in case of missing attributes
+            - status code 400 and message error in case of missing attributes
         """
 
         body = {
             'previous_questions': [],
             'quiz_category': {
-                'type': '',
+                'type': 'click'
             }
         }
         response = self.client.post('/api/v1.0/quizzes', json=body)
-        self.assertTrue(response.status_code == 422)
+        response
+        self.assertTrue(response.status_code == 400)
         data = response.get_json()
-        self.assertTrue(data['message'] == 'unprocessable entity')
+        self.assertTrue(data['message'] == 'bad request')
     
     def test_get_quizzes_404(self):
         """
