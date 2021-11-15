@@ -12,11 +12,13 @@ def populate_db(db, test_data):
     with open(test_data, mode='r') as file:
         for line in file.readlines():
             question, answer, difficulty, category = line.strip().split('\t')
-            if not db.session.query(Category).filter(Category.type == category).first():
+            if not db.session.query(Category).filter(
+                    Category.type == category).first():
                 db.session.add(Category(type=category))
                 db.session.commit()
                 db.session.close()
-            category_obj = db.session.query(Category).filter(Category.type == category).first()
+            category_obj = db.session.query(Category).filter(
+                Category.type == category).first()
             question_obj = Question(
                 question=question,
                 answer=answer,
@@ -79,12 +81,9 @@ class TriviaTestCase(TestCase):
         self.assertTrue(response.status_code == 200)
         data = response.get_json()
         self.assertTrue(data['questions'])
-        # check 10 question per page
         self.assertTrue(len(data['questions']) == 10)
-        # check if total number of questions returned correctly
         self.assertTrue(data['totalQuestions'] == 19)
         self.assertTrue(data['categories'])
-        # this attribute is always false
         self.assertFalse(data['currentCategory'])
 
     def test_search_questions(self):

@@ -16,8 +16,10 @@ class Question(db.Model):
     question = Column(String(250), nullable=False)
     answer = Column(String(250), nullable=False)
     difficulty = Column(Integer, nullable=False)
-    category_id = Column(Integer, db.ForeignKey('categories.id'), nullable=False)
-    category = db.relationship('Category', back_populates='questions', lazy='joined', uselist=False)
+    category_id = Column(Integer, db.ForeignKey('categories.id'), 
+        nullable=False)
+    category = db.relationship('Category', back_populates='questions', 
+        lazy='joined', uselist=False)
 
     def format(self):
         return {

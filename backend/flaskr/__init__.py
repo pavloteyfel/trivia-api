@@ -32,7 +32,9 @@ def create_app(test_config=None):
         page = request.args.get('page', 1, type=int)
 
         # Throws 404 by default if there is non existing page
-        pages = Question.query.order_by(Question.id).paginate(page, QUESTIONS_PER_PAGE)
+        pages = Question.query.order_by(
+            Question.id).paginate(
+            page, QUESTIONS_PER_PAGE)
         categories = Category.query.all()
 
         # Abort if there are no entries
@@ -92,7 +94,7 @@ def create_app(test_config=None):
         try:
             db.session.delete(question)
             db.session.commit()
-        except:
+        except BaseException:
             db.session.rollback()
             abort(422)
         finally:
@@ -107,9 +109,11 @@ def create_app(test_config=None):
         # if there is a search term, then we let's find something
         if request_data.get('searchTerm'):
             search_term = request_data.get('searchTerm')
-            questions = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+            questions = Question.query.filter(
+                Question.question.ilike(f'%{search_term}%')).all()
 
-            # abort the operation if are 0 result, current front end doesn't like it
+            # abort the operation if are 0 result, current front end
+            # doesn't like it
             if not questions:
                 abort(404)
 
@@ -119,16 +123,17 @@ def create_app(test_config=None):
                 'currentCategory': None,
             }), 200
 
-        # then the request is about new question creation, 
+        # then the request is about new question creation,
         # if acquiring of the attributes fails we abort the operation with 400
         try:
-            category_id = request_data['category']
             question = request_data['question']
             answer = request_data['answer']
             difficulty = request_data['difficulty']
+            category_id = request_data['category']
         except KeyError:
             abort(400)
 
+        # thows 404 if category not found or bad id
         category = Category.query.get_or_404(category_id)
 
         try:
@@ -137,7 +142,7 @@ def create_app(test_config=None):
             db.session.add(question_obj)
             db.session.commit()
         # if there is problem with db we abort with 422
-        except:
+        except BaseException:
             db.session.rollback()
             abort(422)
         finally:
@@ -160,7 +165,8 @@ def create_app(test_config=None):
         # get a question from a specific category that was not already used
         if category_id > 0:
             category = Category.query.get_or_404(category_id)
-            filtered_questions = [question for question in category.questions if question.id not in previous_ids]
+            filtered_questions = [
+                question for question in category.questions if question.id not in previous_ids]
 
         # get a question from any category that was not already used
         else:
