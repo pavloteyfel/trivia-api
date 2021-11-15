@@ -2,5 +2,5 @@ __pycache__
 backend/load.py
 backend/questions.txt
 node_modules
-frontend/package-lock.json
 .idea
+frontend/package-lock.json
