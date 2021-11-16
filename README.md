@@ -6,9 +6,55 @@
 4. Search for questions based on a text query string.
 5. Play the quiz game, randomizing either all questions or within a specific category.
 
+All backend code follows [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/).
+
+## Backend
+From the backend folder run `pip install -r requirements.txt`. All required packages are included in the requirements file.
+
+**Key Dependencies**
+ - [Flask](https://flask.palletsprojects.com)
+ - [SQLAlchemy](https://www.sqlalchemy.org/)
+ - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#)
+ - [Flask-Testing](https://pythonhosted.org/Flask-Testing/)
+
+The backend uses [PostgreSQL](https://www.postgresql.org) DBMS.
+
+To run the application run the following commands:
+```shell
+export FLASK_APP=flaskr
+export FLASK_ENV=development
+flask run
+```
+These commands put the application in development mode and directs the application to use the `__init__.py` file in  backed/flaskr folder. If running locally on Windows, look for the commands in the [Flask documentation](https://flask.palletsprojects.com/en/1.0.x/tutorial/factory/).
+
+The application is run on http://127.0.0.1:5000/ by default and is a proxy in the frontend configuration.
+
+
+## Frontend
+From the frontend folder, run the following commands to start the client:
+```shell
+npm install
+```
+To run the frontend:
+```shell
+npm start 
+```
+By default, the frontend will run on http://127.0.0.1:5000.
+
+## Tests
+In order to run tests navigate to the backend folder and run the following commands:
+```shell
+dropdb trivia_test
+createdb trivia_test_test
+python test_flaskr.py
+````
+The first time you run the tests, omit the `dropdb` command.
+
+All tests are kept in that file and should be maintained as updates are made to app functionality.
+
 ## API reference
 ### Getting started
-**Base URL:** At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, http://127.0.0.1:5000/, which is set as a proxy in the frontend configuration.
+**Base URL:** At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, http://127.0.0.1:5000, which is set as a proxy in the frontend configuration.
 
 **Authentication:** This version of the application does not require authentication or API keys.
 
@@ -49,7 +95,6 @@ The API will return three error types when requests fail:
     }
     ```
 #### GET `/api/v1.0/questions?page={integer}`
-
 - **Description:**
   - Fetches a paginated set of questions, a total number of questions, all categories and current category string. 
   - Request Arguments: page - integer
@@ -95,7 +140,6 @@ The API will return three error types when requests fail:
     ```
 
 #### GET `/api/v1.0/categories/{id}/questions`
-
 - **Description:**
   - Fetch questions for a category specified by id request argument 
   - Request Arguments: id - integer
@@ -133,7 +177,6 @@ The API will return three error types when requests fail:
 - **Example request:** `curl -X DELETE http://127.0.0.1:5000/api/v1.0/questions/{id}`
 
 #### POST `/api/v1.0/questions`
-
 - **Description:**
   - Sends a post request in order to add a new question
   - Request Body:
@@ -160,7 +203,7 @@ The API will return three error types when requests fail:
   - Returns: any array of questions, a number of totalQuestions that met the search term and the current category string 
 - **Example request:** `curl -X POST http://127.0.0.1:5000/api/v1.0/questions -H "Content-Type: application/json" -d "{\"searchTerm\": \"which\"}"`
 
-#### POST `/api/v1.0/quizzes`
+#### POST `/api/v1.0/quizzes` 
 - **Description:**
     - Sends a post request in order to get the next question 
     - Request Body:
