@@ -5,10 +5,8 @@ db = SQLAlchemy()
 
 
 class Question(db.Model):
-    '''
-    Question
-
-    '''
+    """Table structure for question data"""
+    
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
@@ -21,6 +19,8 @@ class Question(db.Model):
                                lazy='joined', uselist=False)
 
     def format(self):
+        """Helper function for preparing model data in proper form"""
+
         return {
             'id': self.id,
             'question': self.question,
@@ -31,10 +31,7 @@ class Question(db.Model):
 
 
 class Category(db.Model):
-    '''
-    Category
-
-    '''
+    """Table scruture for category types"""
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
@@ -42,6 +39,7 @@ class Category(db.Model):
     questions = db.relationship('Question', back_populates='category')
 
     def format(self):
+        """Helper function for preparing model data in proper form"""
         return {
             'id': self.id,
             'type': self.type

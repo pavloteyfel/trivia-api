@@ -4,3 +4,4 @@ backend/questions.txt
 node_modules
 .idea
 frontend/package-lock.json
+venv
