@@ -21,8 +21,8 @@ create_questions_schema = {
             'properties': {
                 'question': {'type': 'string', 'minLength': 1},
                 'answer': {'type': 'string', 'minLength': 1},
-                'difficulty': {'types': ['string', 'number'], 'pattern': '^\d+$'},
-                'category': {'types': ['string', 'number'], 'pattern': '^\d+$'}
+                'difficulty': {'types': ['string', 'number'], 'pattern': '^\\d+$'},
+                'category': {'types': ['string', 'number'], 'pattern': '^\\d+$'}
             },
             'required': ['question', 'answer', 'difficulty', 'category']
         },
@@ -48,7 +48,7 @@ get_quizzes_schema = {
             'type': 'object',
             'properties': {
                 'type': {'type': 'string'},
-                'id': {'types': ['string', 'number'], 'pattern': '^\d+$'}
+                'id': {'types': ['string', 'number'], 'pattern': '^\\d+$'}
             },
             'required': ['type', 'id']
         }
@@ -82,14 +82,14 @@ def create_app():
     @app.route('/api/v1.0/questions', methods=['GET'])
     def get_questions():
         """
-        Fetches a paginated set of questions, a total number of questions, all 
-        categories and current category string. 
-        
-        Arguments: 
+        Fetches a paginated set of questions, a total number of questions, all
+        categories and current category string.
+
+        Arguments:
             - page - integer
 
-        Returns: 
-            - An object with 10 paginated questions, total questions, object 
+        Returns:
+            - An object with 10 paginated questions, total questions, object
             including all categories. The current category string is not used
         """
         page = request.args.get('page', 1, type=int)
@@ -120,13 +120,13 @@ def create_app():
     def get_questions_of_category(id):
         """
         Fetch questions for a category specified by id request argument.
-        
-        Arguments: 
+
+        Arguments:
             - id - integer
 
-        Returns: 
-            - An object with questions for the specified category, total 
-            questions, and current category string 
+        Returns:
+            - An object with questions for the specified category, total
+            questions, and current category string
         """
         # Throws 404 if not found or bad id provided
         category = Category.query.get_or_404(id)
@@ -146,14 +146,14 @@ def create_app():
     @app.route('/api/v1.0/categories', methods=['GET'])
     def get_categories():
         """
-        Fetches a dictionary of categories in which the keys are the ids and 
+        Fetches a dictionary of categories in which the keys are the ids and
         the value is the corresponding string of the category.
-        
-        Arguments: 
+
+        Arguments:
             - None
-        
-        Returns: 
-            - An object with a single key, categories, that contains an object 
+
+        Returns:
+            - An object with a single key, categories, that contains an object
             of id: category_string key:value pairs.
         """
         categories_formatted = {}
@@ -174,10 +174,10 @@ def create_app():
         """
         Deletes a specified question using the id of the question.
 
-        Arguments: 
+        Arguments:
             - id - integer
 
-        Returns: 
+        Returns:
             - Nothing
         """
         # Throws 404 if there is no question found or bad id provided
@@ -201,13 +201,13 @@ def create_app():
         question based on the request json body. The received message is
         validated against predefined JSON Schema rules.
 
-        If request body contains `searchTerm`, then returns question data: 
-        an array of questions, a number of totalQuestions that met the search 
+        If request body contains `searchTerm`, then returns question data:
+        an array of questions, a number of totalQuestions that met the search
         term and the current category string.
-        
+
         Otherwise we assume that new question data arrived. In that case we try
         to create one. In that case nothing is returned.
-        
+
         """
         # if there is a search term, then we let's find something
         if payload.data.get('searchTerm'):
@@ -252,7 +252,7 @@ def create_app():
     @expects_json(get_quizzes_schema)
     def get_quizzes():
         """
-        Consumes a post request in order to get the next question. The received 
+        Consumes a post request in order to get the next question. The received
         message is validated against predefined JSON Schema rules.
 
         Returns:
