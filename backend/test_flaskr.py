@@ -147,7 +147,7 @@ class TriviaTestCase(TestCase):
         body = {
             'question': 'Sample question',
             'answer': 'Sample anwser',
-            'difficulty': 1,
+            'difficulty': '1',
             'category': 1
         }
         response = self.client.post('/api/v1.0/questions', json=body)
@@ -239,7 +239,7 @@ class TriviaTestCase(TestCase):
         response = self.client.post('/api/v1.0/questions', json=body)
         self.assertTrue(response.status_code == 400)
         data = response.get_json()
-        self.assertTrue(data['message'] == 'bad request')
+        self.assertTrue(data['error'] == 400)
 
     def test_get_quizzes_400(self):
         """
@@ -257,7 +257,7 @@ class TriviaTestCase(TestCase):
         response
         self.assertTrue(response.status_code == 400)
         data = response.get_json()
-        self.assertTrue(data['message'] == 'bad request')
+        self.assertTrue(data['error'] == 400)
 
     def test_get_quizzes_404(self):
         """

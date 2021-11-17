@@ -1,11 +1,57 @@
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, make_response, g as payload
 from models import db, Question, Category
+from flask_expects_json import expects_json
 from flask_cors import CORS
+from jsonschema import ValidationError
 
 import random
 
 QUESTIONS_PER_PAGE = 10
 
+# ----------------------------------------------------------------------------#
+# Validation shemas for payloads based on https://json-schema.org
+# ----------------------------------------------------------------------------#
+
+create_questions_schema = {
+    'type': 'object',
+    'oneOf': [
+        {
+            'properties': {
+                'question': {'type': 'string', 'minLength': 1},
+                'answer': {'type': 'string', 'minLength': 1},
+                'difficulty': {'types': ['string', 'number'], 'pattern': '^\d+$'},
+                'category': {'types': ['string', 'number'], 'pattern': '^\d+$'}
+            },
+            'required': ['question', 'answer', 'difficulty', 'category']
+        },
+        {
+            'properties': {
+                'searchTerm': {'type': 'string', 'minLength': 1}
+            },
+            'required': ['searchTerm']
+        }
+    ]
+}
+
+get_quizzes_schema = {
+    'type': 'object',
+    'properties': {
+        'previous_questions': {
+            'type': 'array', 
+            'items': {'type': 'number'}, 
+            'uniqueItems': True},
+        'quiz_category': {
+            'type': 'object',
+            'properties': {
+                'type': {'type': 'string'},
+                'id': {'types': ['string', 'number'], 'pattern': '^\d+$'},
+
+            },
+            'required': ['type', 'id']
+        }
+    },
+    'required': ['previous_questions', 'quiz_category']
+}
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -102,13 +148,13 @@ def create_app(test_config=None):
         return jsonify({}), 202
 
     @app.route('/api/v1.0/questions', methods=['POST'])
+    @expects_json(create_questions_schema)
     def create_questions():
         """Creates a question or searches for one"""
-        request_data = request.get_json()
 
         # if there is a search term, then we let's find something
-        if request_data.get('searchTerm'):
-            search_term = request_data.get('searchTerm')
+        if payload.data.get('searchTerm'):
+            search_term = payload.data.get('searchTerm')
             questions = Question.query.filter(
                 Question.question.ilike(f'%{search_term}%')).all()
 
@@ -124,25 +170,20 @@ def create_app(test_config=None):
             }), 200
 
         # then the request is about new question creation,
-        # if acquiring of the attributes fails we abort the operation with 400
-        try:
-            question = request_data['question']
-            answer = request_data['answer']
-            difficulty = request_data['difficulty']
-            category_id = request_data['category']
-        except KeyError:
-            abort(400)
-
         # thows 404 if category not found or bad id
-        category = Category.query.get_or_404(category_id)
+        category_obj = Category.query.get_or_404(payload.data.get('category'))
 
         try:
-            question_obj = Question(question=question, answer=answer,
-                                    difficulty=difficulty, category=category)
+            question_obj = Question()
+            question_obj.question = payload.data.get('question')
+            question_obj.answer = payload.data.get('answer')
+            question_obj.difficulty = payload.data.get('difficulty') # autocovert
+            question_obj.category = category_obj
             db.session.add(question_obj)
             db.session.commit()
         # if there is problem with db we abort with 422
-        except BaseException:
+        except Exception as error:
+            print(error)
             db.session.rollback()
             abort(422)
         finally:
@@ -150,27 +191,22 @@ def create_app(test_config=None):
 
         return jsonify({}), 201
 
-    @app.route('/api/v1.0/quizzes', methods=['POST'])
-    def get_quizzes():
-        request_data = request.get_json()
 
-        # validate the content of the request, in case of error: 422
-        try:
-            previous_ids = request_data['previous_questions']
-            category_data = request_data['quiz_category']
-            category_id = int(category_data['id'])
-        except KeyError:
-            abort(400)
+    @app.route('/api/v1.0/quizzes', methods=['POST'])
+    @expects_json(get_quizzes_schema)
+    def get_quizzes():
+        previous_questions_ids = payload.data.get('previous_questions')
+        category_id = int(payload.data.get('quiz_category').get('id'))
 
         # get a question from a specific category that was not already used
         if category_id > 0:
             category = Category.query.get_or_404(category_id)
             filtered_questions = [
-                question for question in category.questions if question.id not in previous_ids]
+                question for question in category.questions if question.id not in previous_questions_ids]
 
         # get a question from any category that was not already used
         else:
-            questions = Question.query.filter(Question.id.notin_(previous_ids))
+            questions = Question.query.filter(Question.id.notin_(previous_questions_ids))
             filtered_questions = [question for question in questions]
 
         # if there are questions remained then choose randomly one
@@ -187,18 +223,21 @@ def create_app(test_config=None):
 
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"error": 400, "message": "bad request"}), 400
+        if isinstance(error.description, ValidationError):
+            original_error = error.description
+            return make_response(jsonify({'error': 400, 'message': original_error.message}), 400)
+        return jsonify({'error': 400, 'message': 'bad request'}), 400
 
     @app.errorhandler(404)
     def resource_not_found(error):
-        return jsonify({"error": 404, "message": "resource not found"}), 404
+        return jsonify({'error': 404, 'message': 'resource not found'}), 404
 
     @app.errorhandler(405)
     def method_not_allowed(error):
-        return jsonify({"error": 405, "message": "method not allowed"}), 405
+        return jsonify({'error': 405, 'message': 'method not allowed'}), 405
 
     @app.errorhandler(422)
     def unprocessable_entity(error):
-        return jsonify({"error": 422, "message": "unprocessable entity"}), 422
+        return jsonify({'error': 422, 'message': 'unprocessable entity'}), 422
 
     return app
