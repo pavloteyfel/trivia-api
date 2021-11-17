@@ -10,6 +10,7 @@ import logging
 # Turning off migration related logging INFO
 logging.getLogger('alembic.runtime.migration').disabled = True
 
+
 class TriviaTestCase(TestCase):
     """This class represents the trivia test case"""
 
@@ -122,12 +123,12 @@ class TriviaTestCase(TestCase):
         """
         Checks:
             - status_code == 201
-            - if the post request was acceped and insrted into the db
+            - if the post request was accepted and inserted into the db
             - if empty response was received
         """
         body = {
             'question': 'Sample question',
-            'answer': 'Sample anwser',
+            'answer': 'Sample answer',
             'difficulty': '1',
             'category': 1
         }
@@ -142,7 +143,7 @@ class TriviaTestCase(TestCase):
         """
         Checks:
             - status_code == 201
-            - if the post request was acceped and proper question of
+            - if the post request was accepted and proper question of
             a category was returned(Category.id > 0)
             - if questions are omitted by the "previous_questions" attribute
         """
@@ -187,7 +188,7 @@ class TriviaTestCase(TestCase):
         self.assertTrue(data['question'])
         self.assertTrue(data['question']['id'] == remaining_question)
 
-    def test_resoure_not_found_404(self):
+    def test_resource_not_found_404(self):
         """
         Checks:
             - status code 404 and message error in case of non existent
@@ -227,7 +228,6 @@ class TriviaTestCase(TestCase):
         Checks:
             - status code 400 and message error in case of missing attributes
         """
-
         body = {
             'previous_questions': [],
             'quiz_category': {
@@ -235,7 +235,6 @@ class TriviaTestCase(TestCase):
             }
         }
         response = self.client.post('/api/v1.0/quizzes', json=body)
-        response
         self.assertTrue(response.status_code == 400)
         data = response.get_json()
         self.assertTrue(data['error'] == 400)

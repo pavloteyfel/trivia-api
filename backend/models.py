@@ -6,7 +6,6 @@ db = SQLAlchemy()
 
 class Question(db.Model):
     """Table structure for question data"""
-    
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
@@ -20,7 +19,6 @@ class Question(db.Model):
 
     def format(self):
         """Helper function for preparing model data in proper form"""
-
         return {
             'id': self.id,
             'question': self.question,
@@ -31,7 +29,7 @@ class Question(db.Model):
 
 
 class Category(db.Model):
-    """Table scruture for category types"""
+    """Table structure for category types"""
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)

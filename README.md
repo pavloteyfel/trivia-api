@@ -1,5 +1,5 @@
 # Full Stack API Project
-This project allows users to play a trivia game and test their general knowledge. In this project I created an API and unit test cases for the application that allows the folloing:
+This project allows users to play a trivia game and test their general knowledge. In this project I created an API and unit test cases for the application that allows the following:
 
 
 1. Display questions - both all questions and by category. Shows question, category and difficulty rating by default and can show/hide the answer.
