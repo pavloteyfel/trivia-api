@@ -2,13 +2,13 @@
 This project allows users to play a trivia game and test their general knowledge. In this project I created an API and unit test cases for the application that allows the following:
 
 
-1. Display questions - both all questions and by category. Shows question, category and difficulty rating by default and can show/hide the answer.
-2. Delete questions.
-3. Add questions and require that they include question and answer text.
-4. Search for questions based on a text query string.
-5. Play the quiz game, randomizing either all questions or within a specific category.
+1. Displaying questions - both all questions and by category. The app shows questions, category and difficulty rating by default and can show/hide the answer.
+2. Deleting questions.
+3. Adding questions and require that they include question and answer text.
+4. Searching for questions based on a text query string.
+5. Playing the quiz game, randomizing either all questions or within a specific category.
 
-When a user plays the game they play up to five questions of the chosen category. If there are fewer than five questions in a category, the game will end when there are no more questions in that category. 
+When a user plays the game they play up to five questions of the chosen category. If there are fewer than five questions in a category, the game ends when there are no more questions left in that category. 
 
 
 ## Backend
@@ -29,7 +29,7 @@ All required packages are included in the requirements file. From the `backend` 
 
 ### Database Setup
 1. The backend based on the [PostgreSQL](https://www.postgresql.org) DBMS. You need to set up a database with the following command: `createdb trivia`. You may want to change the database name and path in the `backend/config.py` file. 
-2. After setting up the database run `flask db upgrade` command. It will create all the database tables and populate them with some examples seed data. 
+2. After setting up the database run `flask db upgrade` command. It will create all the database tables and populate them with some seed data. 
 
 ### Running the Server
 Start the backend application with the following commands: 
@@ -112,7 +112,7 @@ The API will return three error types when requests fail:
 - **Description:**
   - Fetches a paginated set of questions, a total number of questions, all categories and current category string. 
   - Request Arguments: page - integer
-  - Returns: An object with 10 paginated questions, total questions, object including all categories. The current category string is not used
+  - Returns: An object with 10 paginated questions, the number of total questions, and an object including all categories. The current category string is not used.
 - **Example request:** `curl http://127.0.0.1:5000/api/v1.0/questions?page=1`
 - **Example response:**
     ```json
@@ -155,9 +155,9 @@ The API will return three error types when requests fail:
 
 #### GET `/api/v1.0/categories/{id}/questions`
 - **Description:**
-  - Fetch questions for a category specified by id request argument 
+  - Fetches questions for a category specified by id request argument.
   - Request Arguments: id - integer
-  - Returns: An object with questions for the specified category, total questions, and current category string 
+  - Returns: An object with questions for the specified category, the number of total questions, and current category string. 
 - **Example request:** `curl http://127.0.0.1:5000/api/v1.0/categories/1/questions`
 - **Example response:**
     ```json
@@ -185,14 +185,14 @@ The API will return three error types when requests fail:
 
 #### DELETE `/api/v1.0/questions/{id}`
 - **Description:**
-  - Deletes a specified question using the id of the question
+  - Deletes a specified question using the id of the question.
   - Request Arguments: id - integer
-  - Returns: Does not return anything
+  - Returns: Does not return anything.
 - **Example request:** `curl -X DELETE http://127.0.0.1:5000/api/v1.0/questions/{id}`
 
 #### POST `/api/v1.0/questions`
 - **Description:**
-  - Sends a post request in order to add a new question
+  - Sends a post request in order to add a new question.
   - Request Body:
     ```json
     {
@@ -202,24 +202,24 @@ The API will return three error types when requests fail:
         "category": 3
     }
     ```
-  - Returns: Does not return any new data
+  - Returns: Does not return any new data.
 - **Example request:** `curl -X POST http://127.0.0.1:5000/api/v1.0/questions -H "Content-Type: application/json" -d "{\"question\": \"What is my name?\", \"answer\": \"Anonymous\", \"difficulty\": 5, \"category\": 1}"`
 
 #### POST `/api/v1.0/questions`
 - **Description:**
-  - Sends a post request in order to search for a specific question by search term 
+  - Sends a post request in order to search for a specific question by search term. 
   - Request Body: 
     ```json
     {
         "searchTerm": "this is the term the user is looking for"
     }
     ```
-  - Returns: any array of questions, a number of totalQuestions that met the search term and the current category string 
+  - Returns: Any array of questions, a number of totalQuestions that met the search term and the current category string.
 - **Example request:** `curl -X POST http://127.0.0.1:5000/api/v1.0/questions -H "Content-Type: application/json" -d "{\"searchTerm\": \"which\"}"`
 
 #### POST `/api/v1.0/quizzes` 
 - **Description:**
-    - Sends a post request in order to get the next question 
+    - Sends a post request in order to get the next question.
     - Request Body:
     ```json
     {
@@ -227,7 +227,7 @@ The API will return three error types when requests fail:
         "quiz_category": "History" 
     }
     ```
-    - Returns: a single new question object
+    - Returns: A single new question object.
 - **Example request:** `curl http://127.0.0.1:5000/api/v1.0/quizzes -X POST -H "Content-Type: application/json" -d "{\"previous_questions\": [1, 2, 3], \"quiz_category\": {\"type\": \"Science\", \"id\": 1}}"`
 - **Example response**:
     ```json
