@@ -1,8 +1,9 @@
 from flask import Flask, request, abort, jsonify, make_response, g as payload
 from models import db, Question, Category
 from flask_expects_json import expects_json
-from flask_cors import CORS
 from jsonschema import ValidationError
+from flask_migrate import Migrate
+from flask_cors import CORS
 
 import random
 
@@ -57,6 +58,7 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_object('config')
     db.init_app(app)
+    migrate = Migrate(app, db)
     CORS(app)
 
     @app.after_request

@@ -1,33 +1,14 @@
-from flask_testing import TestCase
-import unittest
-
+from flask_migrate import Migrate, upgrade, downgrade
 from models import Question, Category, db
+from flask_testing import TestCase
 from flaskr import create_app
 
+import unittest
+import logging
 
-def populate_db(db, test_data):
-    """
-    Populates the db with test data from a text file
-    """
-    with open(test_data, mode='r') as file:
-        for line in file.readlines():
-            question, answer, difficulty, category = line.strip().split('\t')
-            if not db.session.query(Category).filter(
-                    Category.type == category).first():
-                db.session.add(Category(type=category))
-                db.session.commit()
-                db.session.close()
-            category_obj = db.session.query(Category).filter(
-                Category.type == category).first()
-            question_obj = Question(
-                question=question,
-                answer=answer,
-                difficulty=difficulty,
-                category=category_obj)
-            db.session.add(question_obj)
-            db.session.commit()
-            db.session.close()
 
+# Turning off migration related logging INFO
+logging.getLogger('alembic.runtime.migration').disabled = True
 
 class TriviaTestCase(TestCase):
     """This class represents the trivia test case"""
@@ -37,17 +18,17 @@ class TriviaTestCase(TestCase):
     def create_app(self):
         app = create_app()
         app.config['SQLALCHEMY_DATABASE_URI'] = self.DB_PATH
+        Migrate(app, db)
         return app
 
     def setUp(self):
         """Prepares the app for testing:
             - Creates tables
             - Clears session
-            - Populates the database with test data from "test_data.txt" file
+            - Populates the database with seed data
         """
-        db.create_all()
+        upgrade()
         db.session.commit()
-        populate_db(db, 'test_data.txt')
 
     def tearDown(self):
         """
@@ -56,7 +37,7 @@ class TriviaTestCase(TestCase):
             - Drops all tables stored in this metadata
         """
         db.session.remove()
-        db.drop_all()
+        downgrade()
 
     def test_get_categories(self):
         """
