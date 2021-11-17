@@ -1,44 +1,54 @@
 # Full Stack API Project
+This project allows users to play a trivia game and test their general knowledge. In this project I created an API and unit test cases for the application that allows the folloing:
 
-When a user plays the game they play up to five questions of the chosen category. If there are fewer than five questions in a category, the game will end when there are no more questions in that category. 
 
-1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
+1. Display questions - both all questions and by category. Shows question, category and difficulty rating by default and can show/hide the answer.
 2. Delete questions.
 3. Add questions and require that they include question and answer text.
 4. Search for questions based on a text query string.
 5. Play the quiz game, randomizing either all questions or within a specific category.
 
-All backend code follows [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/).
+When a user plays the game they play up to five questions of the chosen category. If there are fewer than five questions in a category, the game will end when there are no more questions in that category. 
+
 
 ## Backend
-From the backend folder run `pip install -r requirements.txt`. All required packages are included in the requirements file.
+All backend code follows [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/).
 
-**Key Dependencies**
- - [Flask](https://flask.palletsprojects.com)
- - [SQLAlchemy](https://www.sqlalchemy.org/)
- - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#)
- - [Flask-Testing](https://pythonhosted.org/Flask-Testing/)
- - [Flask-Expects-Json](https://pypi.org/project/flask-expects-json/)
+### Installing Python3 and Dependencies
 
-The backend uses [PostgreSQL](https://www.postgresql.org) DBMS.
+The backend uses [Python v3.10](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
+All required packages are included in the requirements file. From the `backend` folder run `pip install -r requirements.txt`.
 
-To run the application run the following commands:
-```shell
+- Key Dependencies:
+  - [Flask](https://flask.palletsprojects.com)
+  - [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+  - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#)
+  - [Flask-Testing](https://pythonhosted.org/Flask-Testing/)
+  - [Flask-Expects-Json](https://pypi.org/project/flask-expects-json/)
+  - [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/)
+
+### Database Setup
+1. The backend based on the [PostgreSQL](https://www.postgresql.org) DBMS. You need to set up a database with the following command: `createdb trivia`. You may want to change the database name and path in the `backend/config.py` file. 
+2. After setting up the database run `flask db upgrade` command. It will create all the database tables and populate them with some examples seed data. 
+
+### Running the Server
+Start the backend application with the following commands: 
+ ```shell
 export FLASK_APP=flaskr
 export FLASK_ENV=development
 flask run
-```
+   ``` 
 These commands put the application in development mode and directs the application to use the `__init__.py` file in  `backend/flaskr` folder. If running locally on Windows, look for the commands in the [Flask documentation](https://flask.palletsprojects.com/en/1.0.x/tutorial/factory/).
 
 The application is run on http://127.0.0.1:5000/ by default and is a proxy in the frontend configuration.
 
 
 ## Frontend
-**Installing Node and NPM**
+### Installing Node.js and NPM
 
 This project depends on Nodejs and Node Package Manager (NPM). Download and install Node (the download includes NPM) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
 
-**Installing project dependencies**
+### Installing project dependencies
 
 This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the `frontend` directory of this repository.
 
@@ -51,13 +61,8 @@ npm start
 ```
 
 ## Tests
-In order to run tests navigate to the backend folder and run the following commands:
-```shell
-dropdb trivia_test
-createdb trivia_test_test
-python test_flaskr.py
-````
-The first time you run the tests, omit the `dropdb` command.
+1. In order to run tests you need to create a separate database. You can use the following command to create one: `createdb trivia_test`. You can change the database name and path in the `backend/test_flaskr.py` file.
+2. After that you can use the `python test_flaskr.py` or `python3 test_flaskr.py` commands to execute the test cases. The `test_flaskr.py` file uses the same migration method and seed data as the `flaskr` application.
 
 All tests are kept in that file and should be maintained as updates are made to app functionality.
 
