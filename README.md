@@ -1,5 +1,7 @@
 # Full Stack API Project
 
+When a user plays the game they play up to five questions of the chosen category. If there are fewer than five questions in a category, the game will end when there are no more questions in that category. 
+
 1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
 2. Delete questions.
 3. Add questions and require that they include question and answer text.
@@ -16,6 +18,7 @@ From the backend folder run `pip install -r requirements.txt`. All required pack
  - [SQLAlchemy](https://www.sqlalchemy.org/)
  - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#)
  - [Flask-Testing](https://pythonhosted.org/Flask-Testing/)
+ - [Flask-Expects-Json](https://pypi.org/project/flask-expects-json/)
 
 The backend uses [PostgreSQL](https://www.postgresql.org) DBMS.
 
@@ -25,21 +28,27 @@ export FLASK_APP=flaskr
 export FLASK_ENV=development
 flask run
 ```
-These commands put the application in development mode and directs the application to use the `__init__.py` file in  backed/flaskr folder. If running locally on Windows, look for the commands in the [Flask documentation](https://flask.palletsprojects.com/en/1.0.x/tutorial/factory/).
+These commands put the application in development mode and directs the application to use the `__init__.py` file in  `backend/flaskr` folder. If running locally on Windows, look for the commands in the [Flask documentation](https://flask.palletsprojects.com/en/1.0.x/tutorial/factory/).
 
 The application is run on http://127.0.0.1:5000/ by default and is a proxy in the frontend configuration.
 
 
 ## Frontend
-From the frontend folder, run the following commands to start the client:
+**Installing Node and NPM**
+
+This project depends on Nodejs and Node Package Manager (NPM). Download and install Node (the download includes NPM) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
+
+**Installing project dependencies**
+
+This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the `frontend` directory of this repository.
+
+The frontend app was built using create-react-app. In order to run the app in development mode use `npm start`. You can change the script in the `package.json` file. 
+
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits.
+
 ```shell
-npm install
+npm start
 ```
-To run the frontend:
-```shell
-npm start 
-```
-By default, the frontend will run on http://127.0.0.1:5000.
 
 ## Tests
 In order to run tests navigate to the backend folder and run the following commands:
@@ -189,7 +198,7 @@ The API will return three error types when requests fail:
     }
     ```
   - Returns: Does not return any new data
-- **Example request:** `curl -X POST http://127.0.0.1:5000/api/v1.0/questions -H "Content-Type: application/json" -d "{\"question\": \"What is my name?\", \"answer\": \"Anonimous\", \"difficulty\": 5, \"category\": 1}"`
+- **Example request:** `curl -X POST http://127.0.0.1:5000/api/v1.0/questions -H "Content-Type: application/json" -d "{\"question\": \"What is my name?\", \"answer\": \"Anonymous\", \"difficulty\": 5, \"category\": 1}"`
 
 #### POST `/api/v1.0/questions`
 - **Description:**
