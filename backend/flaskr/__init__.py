@@ -21,8 +21,12 @@ create_questions_schema = {
             'properties': {
                 'question': {'type': 'string', 'minLength': 1},
                 'answer': {'type': 'string', 'minLength': 1},
-                'difficulty': {'types': ['string', 'number'], 'pattern': '^\\d+$'},
-                'category': {'types': ['string', 'number'], 'pattern': '^\\d+$'}
+                'difficulty': {
+                    'types': ['string', 'number'],
+                    'pattern': '^\\d+$'},
+                'category': {
+                    'types': ['string', 'number'],
+                    'pattern': '^\\d+$'}
             },
             'required': ['question', 'answer', 'difficulty', 'category']
         },
@@ -265,7 +269,8 @@ def create_app():
         if category_id > 0:
             category = Category.query.get_or_404(category_id)
             filtered_questions = [
-                question for question in category.questions if question.id not in previous_questions_ids]
+                question for question in category.questions if question.id
+                not in previous_questions_ids]
 
         # get a question from any category that was not already used
         else:
@@ -294,7 +299,8 @@ def create_app():
         if isinstance(error.description, ValidationError):
             original_error = error.description
             return make_response(
-                jsonify({'error': 400, 'message': original_error.message}), 400)
+                jsonify(
+                    {'error': 400, 'message': original_error.message}), 400)
         return jsonify({'error': 400, 'message': 'bad request'}), 400
 
     @app.errorhandler(404)
