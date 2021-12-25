@@ -4,15 +4,12 @@ import $ from "jquery";
 import "../stylesheets/FormView.css";
 
 class FormView extends Component {
-  constructor(props) {
-    super();
-    this.state = {
+  state = {
       question: "",
       answer: "",
       difficulty: 1,
       category: 1,
-      categories: {},
-    };
+      categories: {}
   }
 
   componentDidMount() {
@@ -72,16 +69,13 @@ class FormView extends Component {
           onSubmit={this.submitQuestion}
         >
           <label>
-            Question
-            <input type="text" name="question" onChange={this.handleChange} />
+            Question <input type="text" name="question" onChange={this.handleChange} />
           </label>
           <label>
-            Answer
-            <input type="text" name="answer" onChange={this.handleChange} />
+            Answer <input type="text" name="answer" onChange={this.handleChange} />
           </label>
           <label>
-            Difficulty
-            <select name="difficulty" onChange={this.handleChange}>
+            Difficulty <select name="difficulty" onChange={this.handleChange}>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -90,8 +84,7 @@ class FormView extends Component {
             </select>
           </label>
           <label>
-            Category
-            <select name="category" onChange={this.handleChange}>
+            Category <select name="category" onChange={this.handleChange}>
               {Object.keys(this.state.categories).map((id) => {
                 return (
                   <option key={id} value={id}>
